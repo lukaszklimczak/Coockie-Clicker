@@ -1,14 +1,18 @@
 from selenium import webdriver
+from datetime import datetime
 
 path = r'C:\Development\chromedriver_win32\chromedriver.exe'
 driver = webdriver.Chrome(executable_path=path)
 
 driver.get("http://orteil.dashnet.org/experiments/cookie/")
 
+current_date = datetime.now()
+current_time = current_date.strftime("%H:%M:%S")
+current_time_list = current_time.split(":")
+current_time_in_seconds = int(current_time_list[0]) * 3600 + int(current_time_list[1]) * 60 + int(current_time_list[2])
+
 
 play_game = True
-counter = 0
-
 while play_game:
 
     cookie = driver.find_element_by_id('cookie')
@@ -60,17 +64,23 @@ while play_game:
         elif check_money(money, buy_cursor_price):
             click_item(buy_cursor)
 
-    if money % 50 == 2:
-        clicker_run()
+    def check_time_elapsed():
+        global current_time_in_seconds
+        elapsed_date = datetime.now()
+        elapsed_time = elapsed_date.strftime("%H:%M:%S")
+        elapsed_time_list = elapsed_time.split(":")
+        elapsed_time_in_seconds = int(elapsed_time_list[0]) * 3600 + int(elapsed_time_list[1]) * 60 + int(
+            elapsed_time_list[2])
+        if elapsed_time_in_seconds - current_time_in_seconds == 5:
+            current_time_in_seconds = elapsed_time_in_seconds
+            return True
 
-    cookie.click()
+
+    click_item(cookie)
+    if check_time_elapsed():
+        clicker_run()
 
     if money >= 200:
         play_game = False
 
 driver.close()
-
-
-
-
-
